@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "home": "🏠 Início",
+    "explorePlaylists": "🔍 Explorar Playlists",
+    "myPlaylists": "📚 Minhas Playlists",
+    "favorites": "❤️ Favoritos",
+    "preferences": "✨ Preferências",
+    "settings": "⚙️ Configurações"
+  },
+  "settings": {
+    "title": "Configurações",
+    "chooseLanguage": "Escolha seu idioma"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "back": "Voltar",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "search": "Pesquisar"
+  }
+}

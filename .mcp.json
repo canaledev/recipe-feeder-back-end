@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "feedy-tools": {
+      "command": "python",
+      "args": [".claude/feedy_tools.py"]
+    }
+  }
+}

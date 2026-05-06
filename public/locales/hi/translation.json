@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "home": "🏠 होम",
+    "explorePlaylists": "🔍 प्लेलिस्ट एक्सप्लोर करें",
+    "myPlaylists": "📚 मेरी प्लेलिस्ट",
+    "favorites": "❤️ पसंदीदा",
+    "preferences": "✨ प्राथमिकताएँ",
+    "settings": "⚙️ सेटिंग्स"
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "chooseLanguage": "अपनी भाषा चुनें"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "back": "वापस",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "search": "खोजें"
+  }
+}
