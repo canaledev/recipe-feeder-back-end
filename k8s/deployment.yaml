@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedy-api
+  labels:
+    app: feedy-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: feedy-api
+  template:
+    metadata:
+      labels:
+        app: feedy-api
+    spec:
+      containers:
+      - name: feedy-api
+        image: feedy-api:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            secretKeyRef:
+              name: feedy-db-secret
+              key: connection-string
+        - name: JwtSettings__Secret
+          valueFrom:
+            secretKeyRef:
+              name: feedy-jwt-secret
+              key: secret
+        - name: JwtSettings__Issuer
+          value: "feedy-api"
+        - name: JwtSettings__Audience
+          value: "feedy-frontend"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feedy-api-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: feedy-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000

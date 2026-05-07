@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh issue *)",
+      "Bash(gh repo *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\")",
+      "Bash(Select-Object Name, Mode)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(git ls-tree *)",
+      "Bash(dotnet build *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'Scaffold .NET 8 Clean Architecture solution *)"
+    ]
+  }
+}
