@@ -1,3 +1,9 @@
+using Feedy.Api.Endpoints;
+using Feedy.Application.UseCases.GetRecipeFeed;
+using Feedy.Application.UseCases.RegisterUser;
+using Feedy.Domain.Interfaces;
+using Feedy.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuration
@@ -25,9 +31,18 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization();
 
-// Infrastructure wiring will go here
-// var infrastructureServices = new InfrastructureServiceCollection(connectionString);
-// infrastructureServices.Register(builder.Services);
+// Register repositories (Infrastructure layer)
+builder.Services.AddScoped<IRecipeRepository>(sp => new RecipeRepository(connectionString ?? ""));
+builder.Services.AddScoped<IUserRepository>(sp => new UserRepository(connectionString ?? ""));
+
+// Register use case handlers (Application layer)
+// GetRecipeFeed use case
+builder.Services.AddScoped<GetRecipeFeedQueryHandler>();
+builder.Services.AddScoped<FeedRankingService>();
+
+// RegisterUser use case
+builder.Services.AddScoped<RegisterUserCommandHandler>();
+builder.Services.AddScoped<PasswordHasher>();
 
 var app = builder.Build();
 
@@ -36,9 +51,12 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Endpoints
+// Map endpoints
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
     .WithName("Health")
     .AllowAnonymous();
+
+app.MapRecipeEndpoints();
+app.MapUserEndpoints();
 
 app.Run();

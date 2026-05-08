@@ -9,7 +9,14 @@
       "Bash(git ls-tree *)",
       "Bash(dotnet build *)",
       "Bash(git add *)",
-      "Bash(git commit -m 'Scaffold .NET 8 Clean Architecture solution *)"
+      "Bash(git commit -m 'Scaffold .NET 8 Clean Architecture solution *)",
+      "Bash(Get-ChildItem -Path . -Force)",
+      "Bash(Select-Object Name)",
+      "Read(//d/Documents/Proyectos/recipe-feeder/recipe-feeder-front-end/**)",
+      "Bash(git commit -m 'feat: Vertical slice architecture with lab notes *)"
+    ],
+    "additionalDirectories": [
+      "d:\\Documents\\Proyectos\\recipe-feedor\\recipe-feeder-back-end\\src\\Feedy.Api\\Endpoints"
     ]
   }
 }

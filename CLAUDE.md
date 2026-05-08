@@ -88,48 +88,86 @@ dotnet ef database update             # Apply pending migrations
 
 ## Architecture
 
-The solution follows **Clean Architecture** with four layers. Dependencies point inward only — outer layers depend on inner layers, never the reverse.
+The solution follows **Clean Architecture** with four layers and **vertical slices** for use cases. Dependencies point inward only — outer layers depend on inner layers, never the reverse.
 
 ### Layer responsibilities
 
 | Layer | Project | Responsibility |
 |---|---|---|
 | Domain | `Feedy.Domain` | Entities, value objects, domain interfaces (no framework deps) |
-| Application | `Feedy.Application` | Use cases, DTOs, service interfaces, business rules |
+| Application | `Feedy.Application` | Use case handlers, queries/commands, DTOs (one set per use case) |
 | Infrastructure | `Feedy.Infrastructure` | Dapper repositories, JWT, external services |
 | Presentation | `Feedy.Api` | Minimal API endpoints, DI wiring, `Program.cs` |
 
-### Planned folder structure
+### Vertical Slice Structure (Use Cases)
+
+Each use case owns its own resources. **No sharing of DTOs or Application services across use cases.**
 
 ```
 src/
 ├── Feedy.Domain/
 │   ├── Entities/           ← Recipe, User, UserProfile, Playlist
-│   └── Interfaces/         ← IRecipeRepository, IUserRepository, etc.
+│   └── Interfaces/         ← IRecipeRepository, IUserRepository (shared)
 ├── Feedy.Application/
-│   ├── UseCases/           ← one folder per use case (GetFeed, RegisterUser, …)
-│   └── DTOs/               ← request/response contracts
+│   ├── UseCases/
+│   │   ├── GetRecipeFeed/
+│   │   │   ├── GetRecipeFeedQuery.cs         ← Query object
+│   │   │   ├── GetRecipeFeedQueryHandler.cs  ← Query handler
+│   │   │   ├── RecipeDto.cs                  ← Use case specific DTO
+│   │   │   └── FeedRankingService.cs         ← Use case service (never shared)
+│   │   ├── RegisterUser/
+│   │   │   ├── RegisterUserCommand.cs
+│   │   │   ├── RegisterUserCommandHandler.cs
+│   │   │   ├── RegisterUserDto.cs
+│   │   │   └── UserValidationService.cs
+│   │   └── ...
+│   └── Interfaces/         ← Shared domain interfaces only
 ├── Feedy.Infrastructure/
-│   ├── Persistence/        ← Dapper repository implementations + raw SQL
-│   └── Auth/               ← JWT issuance and validation
+│   ├── Persistence/
+│   │   ├── RecipeRepository.cs       ← Implements IRecipeRepository
+│   │   ├── UserRepository.cs
+│   │   └── ...
+│   └── Auth/
+│       ├── JwtTokenProvider.cs
+│       └── PasswordHasher.cs
 └── Feedy.Api/
-    ├── Endpoints/          ← MapXxxEndpoints() extension methods, one file per feature
+    ├── Endpoints/
+    │   ├── RecipeEndpoints.cs        ← MapGetRecipeFeed, MapGetRecipeDetail
+    │   └── UserEndpoints.cs
     └── Program.cs
 tests/
 ├── Feedy.Domain.Tests/
 ├── Feedy.Application.Tests/
+│   └── UseCases/
+│       ├── GetRecipeFeed/
+│       │   └── GetRecipeFeedQueryHandlerTests.cs
+│       └── RegisterUser/
+│           └── RegisterUserCommandHandlerTests.cs
 └── Feedy.Infrastructure.Tests/
+    └── Persistence/
+        └── RecipeRepositoryTests.cs
 ```
 
 ### Key architectural decisions
 
 - **Clean Architecture + SOLID.** Dependencies always point inward. The Domain layer has zero framework references. Use cases depend only on interfaces, never on concrete infrastructure.
-- **Repository pattern via interfaces.** `IRecipeRepository`, `IUserRepository`, etc. are defined in `Feedy.Domain`; their Dapper implementations live in `Feedy.Infrastructure`. This keeps SQL out of the application layer and makes use cases unit-testable with mocks.
+- **Repository pattern via interfaces.** `IRecipeRepository`, `IUserRepository`, etc. are defined in `Feedy.Domain.Interfaces`; their Dapper implementations live in `Feedy.Infrastructure.Persistence`. This keeps SQL out of the application layer and makes use cases unit-testable with mocks.
 - **Dapper for all data access.** SQL queries are written explicitly in repository implementations. No query builders — keep SQL readable and auditable.
+- **Vertical slices for use cases.** Each use case (GetRecipeFeed, RegisterUser, etc.) owns its query/command, handler, DTOs, and services. No sharing of DTOs or Application services across use cases. This prevents hidden coupling and allows use cases to evolve independently.
 - **Minimal APIs, not Controllers.** Route handlers live in `MapXxxEndpoints()` extension methods, one file per feature area.
-- **Smart Feed engine** lives in `Feedy.Application/UseCases/Feed/FeedRankingService.cs`. It reads the user's profile (flavor tags, dietary regime, rejected ingredients) and scores each recipe; the score is exposed as `matchPercentage` (0–100).
+- **Smart Feed engine** lives in `GetRecipeFeed/FeedRankingService.cs`. It reads the user's profile and scores each recipe; the score is exposed as `matchPercentage` (0–100).
 - **All responses are camelCase JSON** to match the TypeScript frontend contract exactly.
 - **KISS / DRY / no code smells.** Prefer simple, readable code. Extract only when there are three or more actual call sites. Avoid primitive obsession, long parameter lists, and feature envy.
+
+## Lab Notes
+
+Technical lessons learned during development. Load on demand with `/lab`:
+
+- `LAB_NOTES_DOTNET.md` — Build errors, NuGet, package versions, Dapper parameter mapping
+- `LAB_NOTES_DATA.md` — Dapper queries, PostgreSQL pooling, N+1 problems, isolation levels
+- `LAB_NOTES_ARCHITECTURE.md` — Clean Architecture boundaries, SOLID, vertical slices, DI
+- `LAB_NOTES_TESTING.md` — xUnit patterns, Moq setup, TestContainers, FluentAssertions
+- `LAB_NOTES_DOCKER.md` — Multi-stage builds, environment variables, health checks, .dockerignore
 
 ### Core data contract
 
