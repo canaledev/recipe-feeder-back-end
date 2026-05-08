@@ -159,6 +159,39 @@ tests/
 - **All responses are camelCase JSON** to match the TypeScript frontend contract exactly.
 - **KISS / DRY / no code smells.** Prefer simple, readable code. Extract only when there are three or more actual call sites. Avoid primitive obsession, long parameter lists, and feature envy.
 
+## Domain-Driven Design (DDD)
+
+The Domain layer is built with DDD principles:
+
+### Value Objects
+Immutable, compared by value. Examples: `Email`, `Password`, `UserId`, `RecipeId`.
+- Cannot be created in invalid state (validation in factory method)
+- Enforce business rules (e.g., email must contain `@`)
+- No identity; equality is by value
+
+### Aggregate Roots
+Domain entities that own child entities and enforce consistency boundaries.
+- `User` is an Aggregate Root with immutable `Email` and `Password` value objects
+- All state changes via public methods (`Register()`, `ChangeEmail()`)
+- Private constructor prevents invalid states
+- Encapsulate business rules: only User knows how to validate email changes
+
+### Domain Events
+Immutable records that capture what happened. Published when aggregates change.
+- `UserRegisteredEvent` — raised when User.Register()
+- `EmailChangedEvent` — raised when User.ChangeEmail()
+- Stored alongside aggregate; cleared after publishing
+- Handlers in Application layer subscribe and react (send email, log metrics)
+
+### Domain Services
+Stateless services that encapsulate logic spanning multiple aggregates.
+- `DuplicateEmailChecker` — checks email uniqueness across User aggregate
+- Injected at Application layer, uses repositories
+
+### Bounded Contexts
+Each context owns its models. A `Recipe` in Catalog context differs from `Recipe` in Feed context.
+(Currently single context; structure ready for expansion)
+
 ## Lab Notes
 
 Technical lessons learned during development. Load on demand with `/lab`:
@@ -168,6 +201,7 @@ Technical lessons learned during development. Load on demand with `/lab`:
 - `LAB_NOTES_ARCHITECTURE.md` — Clean Architecture boundaries, SOLID, vertical slices, DI
 - `LAB_NOTES_TESTING.md` — xUnit patterns, Moq setup, TestContainers, FluentAssertions
 - `LAB_NOTES_DOCKER.md` — Multi-stage builds, environment variables, health checks, .dockerignore
+- `LAB_NOTES_DDD.md` — Aggregates, value objects, domain events, ubiquitous language
 
 ### Core data contract
 
