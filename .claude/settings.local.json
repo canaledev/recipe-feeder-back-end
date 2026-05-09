@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "feedy-tools"
+  ],
+  "enableAllProjectMcpServers": true
+}
