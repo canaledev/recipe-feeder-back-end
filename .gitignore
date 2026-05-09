@@ -64,3 +64,6 @@ postgres_data/
 
 # GitHub workflow session state (local only)
 .claude/github-session.md
+
+# Local tasks
+.tasks/

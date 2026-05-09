@@ -57,6 +57,20 @@ These rules govern how Claude approaches every task in this codebase. They overr
 
 ---
 
+## Workflow Commands
+
+This project has custom commands (shell scripts in `.claude/commands/`) and access to global commands that automate recurring workflows.
+
+| Command | Trigger | Purpose |
+|---------|---------|---------|
+| `/start-feature <name>` | User requests a new feature | Create GitHub Issue + add to project board + create branch + dual analysis interview |
+| `/begin` | Starting work on an existing issue | Dual analysis (functional + technical) + clarifying questions + implementation plan |
+| `/lab [domain]` | Need to reference patterns or known issues | Load domain-scoped lab notes (BUILD, POWERSHELL, GIT, I18N) |
+| `/postmortem` (global) | Review session errors + find prevention solutions | Guided workflow: identify domain → extract invariant → write/update lab note → commit |
+| `/ship` | Task complete, ready to PR | Pre-PR checklist: clean kitchen → tests pass → build succeeds → CHANGELOG updated → stage & create PR |
+
+---
+
 ## Project Overview
 
 **Feedy Backend** is a .NET 8 Web API that powers the Feedy mobile-first PWA — a personalized recipe discovery app. Its core responsibility is the **Smart Feed engine**: ranking recipes against each user's psychographic and nutritional profile to produce a `matchPercentage` score.
