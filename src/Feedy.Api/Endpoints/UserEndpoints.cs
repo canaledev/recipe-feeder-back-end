@@ -1,5 +1,7 @@
 namespace Feedy.Api.Endpoints;
 
+using Feedy.Application;
+using Feedy.Application.Interfaces;
 using Feedy.Application.UseCases.RegisterUser;
 
 /// <summary>
@@ -23,6 +25,7 @@ public static class UserEndpoints
     private static async Task<IResult> Register(
         RegisterUserCommand command,
         RegisterUserCommandHandler handler,
+        ITranslationService translationService,
         CancellationToken cancellationToken = default)
     {
         try
@@ -30,9 +33,21 @@ public static class UserEndpoints
             var result = await handler.HandleAsync(command, cancellationToken);
             return Results.Created($"/api/users/{result.UserId}", result);
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex.Message.Contains("already exists"))
         {
-            return Results.BadRequest(new { error = ex.Message });
+            return Results.BadRequest(new
+            {
+                errorCode = ErrorCodes.UserAlreadyExists,
+                message   = translationService.GetErrorMessage(ErrorCodes.UserAlreadyExists)
+            });
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("8 characters"))
+        {
+            return Results.BadRequest(new
+            {
+                errorCode = ErrorCodes.PasswordTooShort,
+                message   = translationService.GetErrorMessage(ErrorCodes.PasswordTooShort)
+            });
         }
     }
 }

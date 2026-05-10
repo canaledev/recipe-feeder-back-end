@@ -10,7 +10,8 @@ public record RecipeData(
     string[] Tags,
     string Difficulty,
     int PrepTimeMinutes,
-    string MainImageUrl
+    string MainImageUrl,
+    string SourceLanguage
 );
 
 /// <summary>

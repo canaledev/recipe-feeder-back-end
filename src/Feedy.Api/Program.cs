@@ -1,10 +1,15 @@
 using Feedy.Api.Endpoints;
+using Feedy.Application.Interfaces;
+using Feedy.Application.Services;
 using Feedy.Application.UseCases.GetRecipeFeed;
 using Feedy.Application.UseCases.RegisterUser;
 using Feedy.Domain.Interfaces;
 using Feedy.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Localization — .resx files under Resources/, IStringLocalizer<T> resolves by type namespace
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 // Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -34,6 +39,10 @@ builder.Services.AddAuthorization();
 // Register repositories (Infrastructure layer)
 builder.Services.AddScoped<IRecipeRepository>(sp => new RecipeRepository(connectionString ?? ""));
 builder.Services.AddScoped<IUserRepository>(sp => new UserRepository(connectionString ?? ""));
+builder.Services.AddScoped<ITranslationRepository>(sp => new TranslationRepository(connectionString ?? ""));
+
+// Register application services
+builder.Services.AddScoped<ITranslationService, TranslationService>();
 
 // Register use case handlers (Application layer)
 // GetRecipeFeed use case
@@ -45,6 +54,19 @@ builder.Services.AddScoped<RegisterUserCommandHandler>();
 builder.Services.AddScoped<PasswordHasher>();
 
 var app = builder.Build();
+
+// Supported cultures: en (default), es, pt, fr, hi
+// Unsupported codes (e.g. zh) fall back to en via DefaultRequestCulture
+var supportedCultures = new[] { "en", "es", "pt", "fr", "hi" };
+app.UseRequestLocalization(options =>
+{
+    options.SetDefaultCulture("en")
+           .AddSupportedCultures(supportedCultures)
+           .AddSupportedUICultures(supportedCultures);
+    // Reads Accept-Language header; unrecognised codes fall back to "en"
+    options.FallBackToParentCultures = true;
+    options.FallBackToParentUICultures = true;
+});
 
 // Middleware
 app.UseCors("AllowFrontend");

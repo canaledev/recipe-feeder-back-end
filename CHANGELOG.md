@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Generic translation infrastructure: `translations` table, `ITranslationRepository`, `TranslationService` with three-tier fallback chain (requested language → source language → English) (#1)
+- `RequestLocalizationMiddleware` configured for supported cultures: `en`, `es`, `pt`, `fr`, `hi`; unsupported codes fall back to `en` silently (#1)
+- `.resx` resource files for all 5 supported languages; `IStringLocalizer<TranslationService>` injected for error message localization (#1)
+- Unified error response shape `{ "errorCode": "USER_ALREADY_EXISTS", "message": "..." }` with stable `ErrorCodes` constants (#1)
+- `source_language` column on `recipes` table to track content authoring language (#1)
+- SQL migrations: `001_add_translations_table.sql`, `002_add_source_language_to_recipes.sql` (#1)
 - Internationalization (i18n): auto-detects system language on first load; supports English, Spanish, Portuguese, French, and Hindi (#18)
 - Settings screen accessible from the side menu with a language selector (native names + flag icons)
 - Translation files lazy-loaded from `public/locales/{lng}/translation.json` to keep the bundle small

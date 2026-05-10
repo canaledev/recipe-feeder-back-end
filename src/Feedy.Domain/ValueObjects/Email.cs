@@ -25,8 +25,4 @@ public record Email
     }
 
     public override string ToString() => Value;
-
-    // Value object equality is by value, not reference
-    public override int GetHashCode() => Value.GetHashCode();
-    public override bool Equals(object? obj) => obj is Email email && email.Value == Value;
 }
