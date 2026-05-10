@@ -53,9 +53,9 @@ public class TranslationService : ITranslationService
             return translation;
 
         // Step 3: try English — only if source is not already English (already tried above)
-        if (sourceLanguage != "en")
+        if (sourceLanguage != LanguageCodes.Default)
         {
-            translation = await _repository.GetAsync(entityType, entityId, fieldName, "en", cancellationToken);
+            translation = await _repository.GetAsync(entityType, entityId, fieldName, LanguageCodes.Default, cancellationToken);
             if (translation is not null)
                 return translation;
         }

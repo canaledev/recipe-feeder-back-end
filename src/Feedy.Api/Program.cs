@@ -1,4 +1,5 @@
 using Feedy.Api.Endpoints;
+using Feedy.Application;
 using Feedy.Application.Interfaces;
 using Feedy.Application.Services;
 using Feedy.Application.UseCases.GetRecipeFeed;
@@ -55,12 +56,12 @@ builder.Services.AddScoped<PasswordHasher>();
 
 var app = builder.Build();
 
-// Supported cultures: en (default), es, pt, fr, hi
+// Supported cultures driven by LanguageCodes.Supported — single source of truth
 // Unsupported codes (e.g. zh) fall back to en via DefaultRequestCulture
-var supportedCultures = new[] { "en", "es", "pt", "fr", "hi" };
+var supportedCultures = LanguageCodes.Supported.ToArray();
 app.UseRequestLocalization(options =>
 {
-    options.SetDefaultCulture("en")
+    options.SetDefaultCulture(LanguageCodes.Default)
            .AddSupportedCultures(supportedCultures)
            .AddSupportedUICultures(supportedCultures);
     // Reads Accept-Language header; unrecognised codes fall back to "en"
