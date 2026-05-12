@@ -13,7 +13,9 @@
       "Bash(Get-ChildItem -Path . -Force)",
       "Bash(Select-Object Name)",
       "Read(//d/Documents/Proyectos/recipe-feeder/recipe-feeder-front-end/**)",
-      "Bash(git commit -m 'feat: Vertical slice architecture with lab notes *)"
+      "Bash(git commit -m 'feat: Vertical slice architecture with lab notes *)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; Set-Location \"d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\"; dotnet test 2>&1 | Select-Object -Last 20)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\GitHub CLI;\" + $env:PATH; Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; Set-Location \"d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\"; git push origin feature/i18n-infrastructure)"
     ],
     "additionalDirectories": [
       "d:\\Documents\\Proyectos\\recipe-feedor\\recipe-feeder-back-end\\src\\Feedy.Api\\Endpoints"
