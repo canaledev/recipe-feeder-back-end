@@ -4,7 +4,7 @@ namespace Feedy.Application.UseCases.GetRecipeFeed;
 /// Smart Feed ranking engine. Scores recipes against user profile.
 /// Use case specific service. NOT shared with other use cases.
 /// </summary>
-public class FeedRankingService
+internal class FeedRankingService
 {
     /// <summary>
     /// Score a recipe against user preferences.

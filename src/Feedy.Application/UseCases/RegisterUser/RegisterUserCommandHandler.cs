@@ -11,7 +11,7 @@ public class RegisterUserCommandHandler
     private readonly IUserRepository _userRepository;
     private readonly PasswordHasher _passwordHasher;
 
-    public RegisterUserCommandHandler(
+    internal RegisterUserCommandHandler(
         IUserRepository userRepository,
         PasswordHasher passwordHasher)
     {

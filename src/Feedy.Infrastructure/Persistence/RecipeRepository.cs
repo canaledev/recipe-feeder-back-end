@@ -8,7 +8,7 @@ using Npgsql;
 /// <summary>
 /// Recipe repository implementation using Dapper and PostgreSQL.
 /// </summary>
-public class RecipeRepository : IRecipeRepository
+internal class RecipeRepository : IRecipeRepository
 {
     private readonly string _connectionString;
 
