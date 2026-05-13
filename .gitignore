@@ -67,3 +67,6 @@ postgres_data/
 
 # Local tasks
 .tasks/
+
+# Temp files from local dev scripts
+api-*.txt
