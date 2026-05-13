@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Each layer now owns its own DI registration via `AddDomain()`, `AddApplication()`, and `AddInfrastructure(IConfiguration)` extension methods — `Program.cs` no longer imports infrastructure or application namespaces
+- Implementation classes hidden behind `internal`: `FeedRankingService`, `PasswordHasher`, `RecipeRepository`, `UserRepository`; handler constructors also `internal` to enforce encapsulation
+
 ### Added
 - Structured logging via Serilog: compact JSON in production, human-readable template in development (#3)
 - Serilog enrichers: `MachineName`, `EnvironmentName`, `ThreadId` on every log event (#3)

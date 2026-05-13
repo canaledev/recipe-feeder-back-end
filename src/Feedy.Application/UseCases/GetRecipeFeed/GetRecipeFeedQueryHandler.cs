@@ -12,7 +12,7 @@ public class GetRecipeFeedQueryHandler
     private readonly IUserRepository _userRepository;
     private readonly FeedRankingService _rankingService;
 
-    public GetRecipeFeedQueryHandler(
+    internal GetRecipeFeedQueryHandler(
         IRecipeRepository recipeRepository,
         IUserRepository userRepository,
         FeedRankingService rankingService)

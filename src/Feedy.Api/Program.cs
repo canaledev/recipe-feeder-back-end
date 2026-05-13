@@ -1,8 +1,7 @@
 using Feedy.Api.Endpoints;
-using Feedy.Application.UseCases.GetRecipeFeed;
-using Feedy.Application.UseCases.RegisterUser;
-using Feedy.Domain.Interfaces;
-using Feedy.Infrastructure.Persistence;
+using Feedy.Application;
+using Feedy.Domain;
+using Feedy.Infrastructure;
 using Serilog;
 
 // Bootstrap logger catches startup errors before host configuration is complete
@@ -19,11 +18,13 @@ builder.Host.UseSerilog((ctx, services, config) => config
     .Enrich.WithEnvironmentName()
     .Enrich.WithThreadId());
 
-// Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Add services
+builder.Services
+    .AddDomain()
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration);
+
 builder.Services.AddAuthentication()
     .AddJwtBearer(options =>
     {
@@ -43,19 +44,6 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthorization();
-
-// Register repositories (Infrastructure layer)
-builder.Services.AddScoped<IRecipeRepository>(sp => new RecipeRepository(connectionString ?? ""));
-builder.Services.AddScoped<IUserRepository>(sp => new UserRepository(connectionString ?? ""));
-
-// Register use case handlers (Application layer)
-// GetRecipeFeed use case
-builder.Services.AddScoped<GetRecipeFeedQueryHandler>();
-builder.Services.AddScoped<FeedRankingService>();
-
-// RegisterUser use case
-builder.Services.AddScoped<RegisterUserCommandHandler>();
-builder.Services.AddScoped<PasswordHasher>();
 
 var app = builder.Build();
 
