@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Local database infrastructure via Docker: `db/infrastructure/` (schema scripts) and `db/data/` (seed scripts) with incremental migration runner `db/migrate.ps1` (#9)
+- `schema_migrations` tracking table: records each applied script by name so `migrate.ps1` is fully idempotent — re-running never re-applies an already-applied script (#9)
 - Internationalization (i18n): auto-detects system language on first load; supports English, Spanish, Portuguese, French, and Hindi (#18)
 - Settings screen accessible from the side menu with a language selector (native names + flag icons)
 - Translation files lazy-loaded from `public/locales/{lng}/translation.json` to keep the bundle small
