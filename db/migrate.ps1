@@ -69,7 +69,7 @@ foreach ($key in $scripts) {
 
     # Check whether this script has already been applied
     $checkSql = "SELECT 1 FROM schema_migrations WHERE script_name = '" + $key + "';"
-    $exists   = docker exec $Container psql -U $DbUser -d $DbName -tAc $checkSql
+    $exists   = docker exec $Container psql -U $DbUser -d $DbName -tAc $checkSql | Out-String
 
     if ($exists.Trim() -eq '1') {
         Write-Host ('[SKIP] ' + $key)
