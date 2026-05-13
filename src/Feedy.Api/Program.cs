@@ -3,8 +3,21 @@ using Feedy.Application.UseCases.GetRecipeFeed;
 using Feedy.Application.UseCases.RegisterUser;
 using Feedy.Domain.Interfaces;
 using Feedy.Infrastructure.Persistence;
+using Serilog;
+
+// Bootstrap logger catches startup errors before host configuration is complete
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, services, config) => config
+    .ReadFrom.Configuration(ctx.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.WithMachineName()
+    .Enrich.WithEnvironmentName()
+    .Enrich.WithThreadId());
 
 // Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -47,6 +60,7 @@ builder.Services.AddScoped<PasswordHasher>();
 var app = builder.Build();
 
 // Middleware
+app.UseSerilogRequestLogging(); // Single structured event per HTTP request
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
