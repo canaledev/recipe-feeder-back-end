@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Structured logging via Serilog: compact JSON in production, human-readable template in development (#3)
+- Serilog enrichers: `MachineName`, `EnvironmentName`, `ThreadId` on every log event (#3)
+- `UseSerilogRequestLogging()` middleware: one structured event per HTTP request, replacing verbose framework logs (#3)
 - Local database infrastructure via Docker: `db/infrastructure/` (schema scripts) and `db/data/` (seed scripts) with incremental migration runner `db/migrate.ps1` (#9)
 - `schema_migrations` tracking table: records each applied script by name so `migrate.ps1` is fully idempotent — re-running never re-applies an already-applied script (#9)
 - Internationalization (i18n): auto-detects system language on first load; supports English, Spanish, Portuguese, French, and Hindi (#18)
