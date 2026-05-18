@@ -36,7 +36,10 @@ builder.Services
 // FluentValidation — auto-validates requests before controller actions run,
 // returns 400 ValidationProblemDetails on failure (no try-catch needed in controllers)
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddFluentValidationAutoValidation();
+// DisableDataAnnotationsValidation = true ensures only FluentValidation messages appear,
+// preventing duplicate errors from the ASP.NET model binder on non-nullable properties.
+builder.Services.AddFluentValidationAutoValidation(config =>
+    config.DisableDataAnnotationsValidation = true);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
