@@ -1,8 +1,10 @@
-using Feedy.Api.Endpoints;
 using Feedy.Application;
 using Feedy.Domain;
 using Feedy.Infrastructure;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Serilog;
+using System.Text.Json;
 
 // Bootstrap logger catches startup errors before host configuration is complete
 Log.Logger = new LoggerConfiguration()
@@ -24,6 +26,23 @@ builder.Services
     .AddDomain()
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
+
+// Controllers with camelCase JSON to match the TypeScript frontend contract
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+
+// FluentValidation — auto-validates requests before controller actions run,
+// returns 400 ValidationProblemDetails on failure (no try-catch needed in controllers)
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+// DisableDataAnnotationsValidation = true ensures only FluentValidation messages appear,
+// preventing duplicate errors from the ASP.NET model binder on non-nullable properties.
+builder.Services.AddFluentValidationAutoValidation(config =>
+    config.DisableDataAnnotationsValidation = true);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthentication()
     .AddJwtBearer(options =>
@@ -47,18 +66,22 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Middleware
-app.UseSerilogRequestLogging(); // Single structured event per HTTP request
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseSerilogRequestLogging();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map endpoints
+// Health check kept as minimal API — no auth, no validation needed
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
     .WithName("Health")
     .AllowAnonymous();
 
-app.MapRecipeEndpoints();
-app.MapUserEndpoints();
+app.MapControllers();
 
 app.Run();
