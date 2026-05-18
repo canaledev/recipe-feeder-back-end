@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Health check endpoint at `GET /health`: returns JSON `{ status, checks }` with PostgreSQL reachability via `AspNetCore.HealthChecks.NpgSql`; responds 200 Healthy / 503 Unhealthy; anonymous, no auth required (#7)
+
+### Added
 - `Result<T>` discriminated union in `Feedy.Domain.Common`: application services return success or failure without throwing exceptions for business rule violations
 - `Nothing` unit type for `Result<Nothing>` — used when an operation succeeds but returns no data
 - `Error` record (`Code`, `Message`) carried by failed results; `Code` is machine-readable for HTTP status mapping

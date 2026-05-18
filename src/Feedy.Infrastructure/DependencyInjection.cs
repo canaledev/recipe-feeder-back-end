@@ -14,6 +14,10 @@ public static class DependencyInjection
         services.AddScoped<IRecipeRepository>(_ => new RecipeRepository(connectionString));
         services.AddScoped<IUserRepository>(_ => new UserRepository(connectionString));
 
+        // DB reachability check — verifies the PostgreSQL connection is alive
+        services.AddHealthChecks()
+            .AddNpgSql(connectionString, name: "postgres", tags: ["db", "ready"]);
+
         return services;
     }
 }
