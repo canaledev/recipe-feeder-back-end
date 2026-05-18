@@ -13,7 +13,18 @@
       "Bash(Get-ChildItem -Path . -Force)",
       "Bash(Select-Object Name)",
       "Read(//d/Documents/Proyectos/recipe-feeder/recipe-feeder-front-end/**)",
-      "Bash(git commit -m 'feat: Vertical slice architecture with lab notes *)"
+      "Bash(git commit -m 'feat: Vertical slice architecture with lab notes *)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet add src/Feedy.Api/Feedy.Api.csproj package Serilog.AspNetCore; dotnet add src/Feedy.Api/Feedy.Api.csproj package Serilog.Enrichers.Environment; dotnet add src/Feedy.Api/Feedy.Api.csproj package Serilog.Enrichers.Thread; dotnet add src/Feedy.Api/Feedy.Api.csproj package Serilog.Formatting.Compact)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet build d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\\\\src\\\\Feedy.Api\\\\Feedy.Api.csproj 2>&1 | Select-Object -Last 20)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet build d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\\\\src\\\\Feedy.Api\\\\Feedy.Api.csproj 2>&1 | Select-Object -Last 10)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet test \"d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\" 2>&1 | Select-Object -Last 15)",
+      "Bash(git commit -m ' *)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet build d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\\\\src\\\\Feedy.Api\\\\Feedy.Api.csproj 2>&1 | Select-Object -Last 6)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet test d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end 2>&1 | Select-Object -Last 8)",
+      "Read(//d/Documents/Proyectos/recipe-feeder/recipe-feeder-back-end/**)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(git cherry-pick *)"
     ],
     "additionalDirectories": [
       "d:\\Documents\\Proyectos\\recipe-feedor\\recipe-feeder-back-end\\src\\Feedy.Api\\Endpoints"

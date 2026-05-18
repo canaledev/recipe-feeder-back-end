@@ -7,9 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `Result<T>` discriminated union in `Feedy.Domain.Common`: application services return success or failure without throwing exceptions for business rule violations
+- `Nothing` unit type for `Result<Nothing>` — used when an operation succeeds but returns no data
+- `Error` record (`Code`, `Message`) carried by failed results; `Code` is machine-readable for HTTP status mapping
+- Swashbuckle OpenAPI/Swagger UI at `/swagger` (development only)
+- FluentValidation auto-validation: request format and completeness checked before controllers run, producing `400 ValidationProblemDetails` automatically
+
 ### Changed
+- API layer migrated from Minimal APIs to ASP.NET Core Controllers (`[ApiController]`, `ControllerBase`)
+- Error handling: `try-catch` removed from controllers; format errors surface via FluentValidation, business rule violations via `Result<T>`; HTTP status codes mapped explicitly in controller actions (201, 400, 409, 422, 500)
+- Command/Query objects replaced with plain `Request`/`Response` records per use case; handlers renamed to `Service` classes
 - Each layer now owns its own DI registration via `AddDomain()`, `AddApplication()`, and `AddInfrastructure(IConfiguration)` extension methods — `Program.cs` no longer imports infrastructure or application namespaces
-- Implementation classes hidden behind `internal`: `FeedRankingService`, `PasswordHasher`, `RecipeRepository`, `UserRepository`; handler constructors also `internal` to enforce encapsulation
 
 ### Added
 - Structured logging via Serilog: compact JSON in production, human-readable template in development (#3)

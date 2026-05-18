@@ -4,7 +4,7 @@ namespace Feedy.Application.UseCases.RegisterUser;
 /// Password hashing service. Use case specific.
 /// Implements a simple bcrypt-like pattern (would use BCrypt.Net-Next in production).
 /// </summary>
-internal class PasswordHasher
+public class PasswordHasher
 {
     public string Hash(string password)
     {
