@@ -1,3 +1,4 @@
+using Feedy.Api.Middleware;
 using Feedy.Application;
 using Feedy.Domain;
 using Feedy.Infrastructure;
@@ -74,6 +75,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
