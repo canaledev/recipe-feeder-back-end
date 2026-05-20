@@ -28,6 +28,12 @@ type: technical
 
 **Rule:** Use application-level health checks: `pg_isready -U postgres` for PostgreSQL. For the API, use `curl http://localhost:5000/health`. Define `depends_on` with a `condition: service_healthy` to ensure the service is truly ready before starting dependents.
 
+### 6. Dockerfile ENV is the fallback; docker-compose environment: overrides it — but dotnet run does neither
+
+**Cause:** The Dockerfile sets `ENV ASPNETCORE_ENVIRONMENT=Production` as a safe default. `docker-compose.yml` overrides it to `Development` via `environment: ASPNETCORE_ENVIRONMENT: Development`. When you run `dotnet run` directly (outside Docker), neither applies — the process inherits the shell environment, which usually has no `ASPNETCORE_ENVIRONMENT` set, so ASP.NET defaults to `Production`.
+
+**Rule:** For this project, features gated on `IsDevelopment()` (Swagger, detailed errors) are only reachable via `docker compose up`. Never test Swagger by running `dotnet run` — use `docker compose up -d` instead.
+
 ### 5. .dockerignore must exclude large directories and version control metadata
 
 **Cause:** If you build a Docker image without a `.dockerignore`, the build context includes `node_modules/`, `.git/`, `bin/`, `obj/`, and other large directories. This slows the build and increases upload time to registries.
