@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Result<T>` discriminated union in `Feedy.Domain.Common`: application services return success or failure without throwing exceptions for business rule violations
 - `Nothing` unit type for `Result<Nothing>` — used when an operation succeeds but returns no data
 - `Error` record (`Code`, `Message`) carried by failed results; `Code` is machine-readable for HTTP status mapping
-- Swashbuckle OpenAPI/Swagger UI at `/swagger` (development only)
+- Swashbuckle OpenAPI/Swagger UI at `/swagger` (development only); XML doc comments enabled so controller `<summary>` tags and `[ProducesResponseType]` attributes render in the UI (#5)
 - FluentValidation auto-validation: request format and completeness checked before controllers run, producing `400 ValidationProblemDetails` automatically
 
 ### Changed
