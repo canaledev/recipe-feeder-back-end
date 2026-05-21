@@ -3,6 +3,7 @@ using Feedy.Application;
 using Feedy.Application.Interfaces;
 using Feedy.Application.Services;
 using Feedy.Domain;
+using Feedy.Domain.Interfaces;
 using Feedy.Infrastructure;
 using Feedy.Infrastructure.Persistence;
 using FluentValidation;
