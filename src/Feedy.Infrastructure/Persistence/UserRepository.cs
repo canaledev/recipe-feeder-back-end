@@ -8,7 +8,7 @@ using Npgsql;
 /// <summary>
 /// User repository implementation using Dapper and PostgreSQL.
 /// </summary>
-public class UserRepository : IUserRepository
+internal class UserRepository : IUserRepository
 {
     private readonly string _connectionString;
 

@@ -14,6 +14,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unified error response shape `{ "errorCode": "USER_ALREADY_EXISTS", "message": "..." }` with stable `ErrorCodes` constants (#1)
 - `source_language` column on `recipes` table to track content authoring language (#1)
 - SQL migrations: `001_add_translations_table.sql`, `002_add_source_language_to_recipes.sql` (#1)
+- CORS policy `AllowFrontend`: restricts allowed methods to GET, POST, PUT, DELETE, PATCH; reads allowed origins from `CorsOrigins` in `appsettings.json`; includes `https://feedy.app` as the production origin (#6)
+- Unit tests for `CorsConfigurationTests` covering allowed origins, explicit method list, `AllowAnyMethod = false`, and `AllowAnyHeader = true` (#6)
+- Global exception handler middleware (`GlobalExceptionHandlerMiddleware`): catches all unhandled exceptions, logs full stack trace via Serilog, and returns a RFC 7807 `ProblemDetails` 500 response; exception detail included only in Development environment (#2)
+- `Feedy.Api.Tests` project: unit tests for `GlobalExceptionHandlerMiddleware` covering happy path, 500 status, `application/problem+json` content type, error logging, dev/prod detail visibility (#2)
+- Health check endpoint at `GET /health`: returns JSON `{ status, checks }` with PostgreSQL reachability via `AspNetCore.HealthChecks.NpgSql`; responds 200 Healthy / 503 Unhealthy; anonymous, no auth required (#7)
+
+### Added
+- `Result<T>` discriminated union in `Feedy.Domain.Common`: application services return success or failure without throwing exceptions for business rule violations
+- `Nothing` unit type for `Result<Nothing>` — used when an operation succeeds but returns no data
+- `Error` record (`Code`, `Message`) carried by failed results; `Code` is machine-readable for HTTP status mapping
+- Swashbuckle OpenAPI/Swagger UI at `/swagger` (development only); XML doc comments enabled so controller `<summary>` tags and `[ProducesResponseType]` attributes render in the UI (#5)
+- FluentValidation auto-validation: request format and completeness checked before controllers run, producing `400 ValidationProblemDetails` automatically
+
+### Changed
+- API layer migrated from Minimal APIs to ASP.NET Core Controllers (`[ApiController]`, `ControllerBase`)
+- Error handling: `try-catch` removed from controllers; format errors surface via FluentValidation, business rule violations via `Result<T>`; HTTP status codes mapped explicitly in controller actions (201, 400, 409, 422, 500)
+- Command/Query objects replaced with plain `Request`/`Response` records per use case; handlers renamed to `Service` classes
+- Each layer now owns its own DI registration via `AddDomain()`, `AddApplication()`, and `AddInfrastructure(IConfiguration)` extension methods — `Program.cs` no longer imports infrastructure or application namespaces
+
+### Added
+- Structured logging via Serilog: compact JSON in production, human-readable template in development (#3)
+- Serilog enrichers: `MachineName`, `EnvironmentName`, `ThreadId` on every log event (#3)
+- `UseSerilogRequestLogging()` middleware: one structured event per HTTP request, replacing verbose framework logs (#3)
+- Local database infrastructure via Docker: `db/infrastructure/` (schema scripts) and `db/data/` (seed scripts) with incremental migration runner `db/migrate.ps1` (#9)
+- `schema_migrations` tracking table: records each applied script by name so `migrate.ps1` is fully idempotent — re-running never re-applies an already-applied script (#9)
 - Internationalization (i18n): auto-detects system language on first load; supports English, Spanish, Portuguese, French, and Hindi (#18)
 - Settings screen accessible from the side menu with a language selector (native names + flag icons)
 - Translation files lazy-loaded from `public/locales/{lng}/translation.json` to keep the bundle small

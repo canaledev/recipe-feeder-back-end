@@ -1,20 +1,20 @@
 namespace Feedy.Application.UseCases.GetRecipeFeed;
 
 using Feedy.Application.Interfaces;
+using Feedy.Domain.Common;
 using Feedy.Domain.Interfaces;
 
 /// <summary>
-/// Handler for GetRecipeFeedQuery. Orchestrates the use case.
-/// Does not reference any other use case's services or DTOs.
+/// Orchestrates the GetRecipeFeed use case: loads user profile, ranks recipes, paginates.
 /// </summary>
-public class GetRecipeFeedQueryHandler
+public class GetRecipeFeedService
 {
     private readonly IRecipeRepository _recipeRepository;
     private readonly IUserRepository _userRepository;
     private readonly FeedRankingService _rankingService;
     private readonly ITranslationService _translationService;
 
-    public GetRecipeFeedQueryHandler(
+    public GetRecipeFeedService(
         IRecipeRepository recipeRepository,
         IUserRepository userRepository,
         FeedRankingService rankingService,
@@ -26,7 +26,8 @@ public class GetRecipeFeedQueryHandler
         _translationService  = translationService;
     }
 
-    public async Task<GetRecipeFeedResult> HandleAsync(GetRecipeFeedQuery query, CancellationToken cancellationToken)
+    public async Task<Result<GetRecipeFeedResponse>> HandleAsync(
+        GetRecipeFeedRequest request, CancellationToken cancellationToken)
     {
         // TODO: Implement full logic
         // 1. Load user profile from _userRepository
@@ -36,8 +37,7 @@ public class GetRecipeFeedQueryHandler
         //    using the language from the current request culture (CultureInfo.CurrentUICulture.Name)
         // 5. Map to RecipeDto (use-case specific)
         // 6. Apply pagination
-        // 7. Return GetRecipeFeedResult
-
-        return await Task.FromResult(new GetRecipeFeedResult([], 0, query.PageNumber, query.PageSize));
+        var response = new GetRecipeFeedResponse([], 0, request.PageNumber, request.PageSize);
+        return await Task.FromResult(Result<GetRecipeFeedResponse>.Ok(response));
     }
 }

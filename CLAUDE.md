@@ -79,7 +79,7 @@ This project has custom commands (shell scripts in `.claude/commands/`) and acce
 
 ## Tech Stack
 
-- **.NET 8 Web API** — Minimal APIs preferred over MVC controllers
+- **.NET 8 Web API** — Controllers (`[ApiController]`, `ControllerBase`), one controller per feature area
 - **Dapper** — micro-ORM for all database access; raw SQL mapped to domain models
 - **SQL Server / PostgreSQL** (TBD) — relational store for recipes, users, and profiles
 - **JWT Bearer** — authentication tokens consumed by the frontend
@@ -109,9 +109,9 @@ The solution follows **Clean Architecture** with four layers and **vertical slic
 | Layer | Project | Responsibility |
 |---|---|---|
 | Domain | `Feedy.Domain` | Entities, value objects, domain interfaces (no framework deps) |
-| Application | `Feedy.Application` | Use case handlers, queries/commands, DTOs (one set per use case) |
+| Application | `Feedy.Application` | Use case services, Request/Response records, internal helpers (one set per use case) |
 | Infrastructure | `Feedy.Infrastructure` | Dapper repositories, JWT, external services |
-| Presentation | `Feedy.Api` | Minimal API endpoints, DI wiring, `Program.cs` |
+| Presentation | `Feedy.Api` | Controllers, FluentValidation validators, DI wiring, `Program.cs` |
 
 ### Vertical Slice Structure (Use Cases)
 
@@ -120,20 +120,22 @@ Each use case owns its own resources. **No sharing of DTOs or Application servic
 ```
 src/
 ├── Feedy.Domain/
+│   ├── Common/             ← Result<T>, Nothing, Error
 │   ├── Entities/           ← Recipe, User, UserProfile, Playlist
 │   └── Interfaces/         ← IRecipeRepository, IUserRepository (shared)
 ├── Feedy.Application/
 │   ├── UseCases/
 │   │   ├── GetRecipeFeed/
-│   │   │   ├── GetRecipeFeedQuery.cs         ← Query object
-│   │   │   ├── GetRecipeFeedQueryHandler.cs  ← Query handler
-│   │   │   ├── RecipeDto.cs                  ← Use case specific DTO
-│   │   │   └── FeedRankingService.cs         ← Use case service (never shared)
+│   │   │   ├── GetRecipeFeedRequest.cs   ← Input record
+│   │   │   ├── GetRecipeFeedResponse.cs  ← Output record
+│   │   │   ├── GetRecipeFeedService.cs   ← Orchestrates the use case
+│   │   │   ├── RecipeDto.cs              ← Use case specific DTO (never shared)
+│   │   │   └── FeedRankingService.cs     ← Internal domain service (never shared)
 │   │   ├── RegisterUser/
-│   │   │   ├── RegisterUserCommand.cs
-│   │   │   ├── RegisterUserCommandHandler.cs
-│   │   │   ├── RegisterUserDto.cs
-│   │   │   └── UserValidationService.cs
+│   │   │   ├── RegisterUserRequest.cs
+│   │   │   ├── RegisterUserResponse.cs
+│   │   │   ├── RegisterUserService.cs
+│   │   │   └── PasswordHasher.cs
 │   │   └── ...
 │   └── Interfaces/         ← Shared domain interfaces only
 ├── Feedy.Infrastructure/
@@ -142,21 +144,22 @@ src/
 │   │   ├── UserRepository.cs
 │   │   └── ...
 │   └── Auth/
-│       ├── JwtTokenProvider.cs
-│       └── PasswordHasher.cs
+│       └── JwtTokenProvider.cs
 └── Feedy.Api/
-    ├── Endpoints/
-    │   ├── RecipeEndpoints.cs        ← MapGetRecipeFeed, MapGetRecipeDetail
-    │   └── UserEndpoints.cs
+    ├── Controllers/
+    │   ├── RecipesController.cs
+    │   └── UsersController.cs
+    ├── Validators/
+    │   └── RegisterUserRequestValidator.cs
     └── Program.cs
 tests/
 ├── Feedy.Domain.Tests/
 ├── Feedy.Application.Tests/
 │   └── UseCases/
 │       ├── GetRecipeFeed/
-│       │   └── GetRecipeFeedQueryHandlerTests.cs
+│       │   └── GetRecipeFeedServiceTests.cs
 │       └── RegisterUser/
-│           └── RegisterUserCommandHandlerTests.cs
+│           └── RegisterUserServiceTests.cs
 └── Feedy.Infrastructure.Tests/
     └── Persistence/
         └── RecipeRepositoryTests.cs
@@ -167,8 +170,11 @@ tests/
 - **Clean Architecture + SOLID.** Dependencies always point inward. The Domain layer has zero framework references. Use cases depend only on interfaces, never on concrete infrastructure.
 - **Repository pattern via interfaces.** `IRecipeRepository`, `IUserRepository`, etc. are defined in `Feedy.Domain.Interfaces`; their Dapper implementations live in `Feedy.Infrastructure.Persistence`. This keeps SQL out of the application layer and makes use cases unit-testable with mocks.
 - **Dapper for all data access.** SQL queries are written explicitly in repository implementations. No query builders — keep SQL readable and auditable.
-- **Vertical slices for use cases.** Each use case (GetRecipeFeed, RegisterUser, etc.) owns its query/command, handler, DTOs, and services. No sharing of DTOs or Application services across use cases. This prevents hidden coupling and allows use cases to evolve independently.
-- **Minimal APIs, not Controllers.** Route handlers live in `MapXxxEndpoints()` extension methods, one file per feature area.
+- **Vertical slices for use cases.** Each use case (GetRecipeFeed, RegisterUser, etc.) owns its Request, Response, Service, and internal helpers. No sharing of DTOs or Application services across use cases. This prevents hidden coupling and allows use cases to evolve independently.
+- **Controllers, not Minimal APIs.** Route handlers live in `[ApiController]` classes under `Feedy.Api/Controllers/`, one file per feature area.
+- **No `try-catch` in controllers.** Format/completeness errors are caught by FluentValidation before the action runs (auto 400). Business rule violations are returned as `Result<T>.Fail(Error)` from the service; the controller maps the error code to the correct HTTP status (409 Conflict, 422 Unprocessable, etc.).
+- **`Result<T>` for business outcomes.** Application services never throw for expected failures. They return `Result<T>.Ok(value)` or `Result<T>.Fail(error)`. Use `Result<Nothing>` for void operations.
+- **FluentValidation at the presentation boundary.** Validators live in `Feedy.Api/Validators/`. They check format and completeness only — business rules (uniqueness, existence) belong in the service.
 - **Smart Feed engine** lives in `GetRecipeFeed/FeedRankingService.cs`. It reads the user's profile and scores each recipe; the score is exposed as `matchPercentage` (0–100).
 - **All responses are camelCase JSON** to match the TypeScript frontend contract exactly.
 - **KISS / DRY / no code smells.** Prefer simple, readable code. Extract only when there are three or more actual call sites. Avoid primitive obsession, long parameter lists, and feature envy.
