@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Generic translation infrastructure: `translations` table, `ITranslationRepository`, `TranslationService` with three-tier fallback chain (requested language → source language → English) (#1)
+- `RequestLocalizationMiddleware` configured for supported cultures: `en`, `es`, `pt`, `fr`, `hi`; unsupported codes fall back to `en` silently (#1)
+- `.resx` resource files for all 5 supported languages; `IStringLocalizer<TranslationService>` injected for error message localization (#1)
+- Unified error response shape `{ "errorCode": "USER_ALREADY_EXISTS", "message": "..." }` with stable `ErrorCodes` constants (#1)
+- `source_language` column on `recipes` table to track content authoring language (#1)
+- SQL migrations: `001_add_translations_table.sql`, `002_add_source_language_to_recipes.sql` (#1)
 - CORS policy `AllowFrontend`: restricts allowed methods to GET, POST, PUT, DELETE, PATCH; reads allowed origins from `CorsOrigins` in `appsettings.json`; includes `https://feedy.app` as the production origin (#6)
 - Unit tests for `CorsConfigurationTests` covering allowed origins, explicit method list, `AllowAnyMethod = false`, and `AllowAnyHeader = true` (#6)
 - Global exception handler middleware (`GlobalExceptionHandlerMiddleware`): catches all unhandled exceptions, logs full stack trace via Serilog, and returns a RFC 7807 `ProblemDetails` 500 response; exception detail included only in Development environment (#2)

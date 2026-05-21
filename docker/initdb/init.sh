@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Runs all DB migrations in order on first postgres init.
 # Uses schema_migrations for tracking — consistent with migrate.ps1.
 # Runs automatically from /docker-entrypoint-initdb.d/ on a fresh volume.

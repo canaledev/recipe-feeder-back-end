@@ -21,7 +21,10 @@ internal class RecipeRepository : IRecipeRepository
         GetRecipesForFeedAsync(IEnumerable<string> preferredTags, IEnumerable<string> dietaryRegime, CancellationToken cancellationToken)
     {
         const string sql = @"
-            SELECT id, title, description, tags, difficulty, prep_time_minutes as PrepTimeMinutes, main_image_url as MainImageUrl
+            SELECT id, title, description, tags, difficulty,
+                   prep_time_minutes  AS PrepTimeMinutes,
+                   main_image_url     AS MainImageUrl,
+                   source_language    AS SourceLanguage
             FROM recipes
             WHERE is_active = true
             LIMIT 100";

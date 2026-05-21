@@ -1,7 +1,11 @@
 using Feedy.Api.Middleware;
 using Feedy.Application;
+using Feedy.Application.Interfaces;
+using Feedy.Application.Services;
 using Feedy.Domain;
+using Feedy.Domain.Interfaces;
 using Feedy.Infrastructure;
+using Feedy.Infrastructure.Persistence;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -24,11 +28,19 @@ builder.Host.UseSerilog((ctx, services, config) => config
     .Enrich.WithThreadId());
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Localization — .resx files under Resources/, IStringLocalizer<T> resolves by type namespace
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services
     .AddDomain()
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
+
+// Translation infrastructure (i18n) — registered separately until AddInfrastructure absorbs them
+builder.Services.AddScoped<ITranslationRepository>(sp => new TranslationRepository(connectionString ?? ""));
+builder.Services.AddScoped<ITranslationService, TranslationService>();
 
 // Controllers with camelCase JSON to match the TypeScript frontend contract
 builder.Services
@@ -83,6 +95,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseSerilogRequestLogging();
+
+// Localization middleware — reads Accept-Language header; unsupported codes fall back to "en"
+var supportedCultures = LanguageCodes.Supported.ToArray();
+app.UseRequestLocalization(options =>
+{
+    options.SetDefaultCulture(LanguageCodes.Default)
+           .AddSupportedCultures(supportedCultures)
+           .AddSupportedUICultures(supportedCultures);
+    options.FallBackToParentCultures = true;
+    options.FallBackToParentUICultures = true;
+});
+
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();

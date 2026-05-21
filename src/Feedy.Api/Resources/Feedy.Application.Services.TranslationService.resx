@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+
+  <data name="USER_ALREADY_EXISTS" xml:space="preserve">
+    <value>A user with that email already exists.</value>
+  </data>
+  <data name="INVALID_EMAIL" xml:space="preserve">
+    <value>The email address is not valid.</value>
+  </data>
+  <data name="PASSWORD_TOO_SHORT" xml:space="preserve">
+    <value>Password must be at least 8 characters long.</value>
+  </data>
+</root>
