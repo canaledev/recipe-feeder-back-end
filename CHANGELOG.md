@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- CORS policy `AllowFrontend`: restricts allowed methods to GET, POST, PUT, DELETE, PATCH; reads allowed origins from `CorsOrigins` in `appsettings.json`; includes `https://feedy.app` as the production origin (#6)
+- Unit tests for `CorsConfigurationTests` covering allowed origins, explicit method list, `AllowAnyMethod = false`, and `AllowAnyHeader = true` (#6)
 - Global exception handler middleware (`GlobalExceptionHandlerMiddleware`): catches all unhandled exceptions, logs full stack trace via Serilog, and returns a RFC 7807 `ProblemDetails` 500 response; exception detail included only in Development environment (#2)
 - `Feedy.Api.Tests` project: unit tests for `GlobalExceptionHandlerMiddleware` covering happy path, 500 status, `application/problem+json` content type, error logging, dev/prod detail visibility (#2)
 - Health check endpoint at `GET /health`: returns JSON `{ status, checks }` with PostgreSQL reachability via `AspNetCore.HealthChecks.NpgSql`; responds 200 Healthy / 503 Unhealthy; anonymous, no auth required (#7)

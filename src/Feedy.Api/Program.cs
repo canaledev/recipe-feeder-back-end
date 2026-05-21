@@ -66,7 +66,7 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(builder.Configuration.GetSection("CorsOrigins").Get<string[]>() ?? [])
-            .AllowAnyMethod()
+            .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
             .AllowAnyHeader();
     });
 });
