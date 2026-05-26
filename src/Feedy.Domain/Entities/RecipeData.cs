@@ -30,5 +30,6 @@ public record UserProfileData(
 public record UserData(
     Guid Id,
     string Email,
-    string PasswordHash
+    string PasswordHash,
+    string FullName
 );

@@ -6,4 +6,4 @@ namespace Feedy.Application.UseCases.RegisterUser;
 public record RegisterUserRequest(
     string Email,
     string Password,
-    string[] InitialFlavorTags);
+    string FullName);
