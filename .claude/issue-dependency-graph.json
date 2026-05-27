@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "updated_at": "2026-05-27",
+  "repo": "canaledev/recipe-feeder-back-end",
+  "note": "Auto-maintained. Updated by /start-feature after issue creation. Rebuild by running /next-task when the file is missing.",
+  "issues": {
+    "4": {
+      "title": "Configurar Validación de Entradas con FluentValidation",
+      "depends_on": [],
+      "rationale": "Foundational setup; no open blockers. May already be complete — FluentValidation was likely installed in PR #34 (auth). Verify before starting."
+    },
+    "18": {
+      "title": "Playlist Catalog API — browse, subscribe, and view playlist detail",
+      "depends_on": [],
+      "rationale": "Auth (#17) already merged in PR #34; no remaining open blockers."
+    },
+    "19": {
+      "title": "Playlist Play Mode API — playhead sync, mark-done, and skip",
+      "depends_on": [18],
+      "rationale": "Needs PlaylistsController, IPlaylistRepository, and user_playlist_items table introduced by #18."
+    },
+    "20": {
+      "title": "Favorites API — CRUD and folder/collection management",
+      "depends_on": [],
+      "rationale": "Auth (#17) merged; no other open blockers."
+    },
+    "21": {
+      "title": "Custom Playlist Management API — create, edit, and recipe search",
+      "depends_on": [18],
+      "rationale": "Explicitly extends PlaylistsController created in #18."
+    },
+    "22": {
+      "title": "AI Recipe Suggestion API — personalized single-recipe suggestion",
+      "depends_on": [],
+      "rationale": "Reuses FeedRankingService; auth done. FeedRankingService must exist — verify before starting."
+    },
+    "23": {
+      "title": "epic: Authentication & Identity",
+      "depends_on": [],
+      "rationale": "Umbrella tracking issue — not a workable task.",
+      "is_epic": true
+    },
+    "24": {
+      "title": "JWT refresh token rotation — short-lived access + long-lived refresh",
+      "depends_on": [],
+      "rationale": "Extends JwtTokenProvider from #17 (already merged)."
+    },
+    "25": {
+      "title": "Secure logout — JWT token revocation (blocklist)",
+      "depends_on": [],
+      "rationale": "Auth (#17) done. #24 recommended first but not a hard dependency — IEmailSender can be stubbed."
+    },
+    "26": {
+      "title": "Rate limiting on auth endpoints (429 Too Many Requests)",
+      "depends_on": [],
+      "rationale": "Auth (#17) done; pure middleware addition, no structural blockers."
+    },
+    "27": {
+      "title": "Account lockout after repeated failed login attempts",
+      "depends_on": [],
+      "rationale": "Auth (#17) done; IEmailSender can be stubbed for unlock email."
+    },
+    "28": {
+      "title": "Password reset — forgot password with time-limited single-use tokens",
+      "depends_on": [],
+      "rationale": "Auth (#17) done; IEmailSender can be stubbed."
+    },
+    "29": {
+      "title": "Social OAuth — Google login (OAuth2 + PKCE)",
+      "depends_on": [],
+      "rationale": "Auth (#17) done; introduces auth_provider column migration that #30 and #31 require."
+    },
+    "30": {
+      "title": "Social OAuth — Apple Sign In",
+      "depends_on": [29],
+      "rationale": "Issue body explicitly states: 'Depends on Google OAuth ticket for auth_provider column migration'."
+    },
+    "31": {
+      "title": "Social OAuth — Facebook login",
+      "depends_on": [29],
+      "rationale": "Issue body explicitly states: 'Depends on Google OAuth ticket for auth_provider column migration'."
+    },
+    "32": {
+      "title": "Two-factor authentication (TOTP — RFC 6238)",
+      "depends_on": [],
+      "rationale": "Auth (#17) done; standalone TOTP addition."
+    },
+    "33": {
+      "title": "Onboarding flow — InitialFlavorTags capture after registration",
+      "depends_on": [],
+      "rationale": "Reuses IUserRepository.UpdateProfileAsync; auth done."
+    }
+  }
+}

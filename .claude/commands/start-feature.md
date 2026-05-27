@@ -132,3 +132,48 @@ git checkout -b feature/<name>
 ```
 Branch BEFORE any file is touched (see LAB_NOTES_GIT.md note #10).
 Report the issue URL and branch name to the user.
+
+---
+
+## Phase 5: Update dependency graph
+
+After the issue is created, register it in `.claude/issue-dependency-graph.json` so future `/next-task` runs stay fast.
+
+**5a. Parse dependencies from the issue body:**
+
+Read the "Dependencies on other tickets" line from the body you just wrote.
+Extract every `#N` reference as an integer. If the line says "none", the array is empty.
+
+**5b. Read the current graph:**
+
+Read `.claude/issue-dependency-graph.json`.
+If the file does not exist, create it with this skeleton:
+```json
+{
+  "version": 1,
+  "updated_at": "<today ISO date>",
+  "repo": "canaledev/recipe-feeder-back-end",
+  "note": "Auto-maintained. Updated by /start-feature after issue creation. Rebuild by deleting this file and running /next-task.",
+  "issues": {}
+}
+```
+
+**5c. Add the new issue entry:**
+
+Insert a new key under `"issues"` using the issue number (as a string) as the key:
+```json
+"<number>": {
+  "title": "<issue title>",
+  "depends_on": [<parsed dependency numbers>],
+  "rationale": "<one sentence: why these dependencies exist, or 'No dependencies.' if empty>"
+}
+```
+
+Also update the top-level `"updated_at"` field to today's date.
+
+**5d. Write the updated graph:**
+
+Use the Write tool to save the updated JSON back to `.claude/issue-dependency-graph.json`.
+Do NOT use Bash or shell redirection — the Write tool only.
+
+Confirm to the user: `Dependency graph updated — issue #N registered with depends_on: [...]`
