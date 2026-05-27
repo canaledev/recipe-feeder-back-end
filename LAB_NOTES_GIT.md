@@ -33,3 +33,37 @@ Run with `run_in_background: true` — launches device flow, show code to user.
 **Cause:** Implementing on `main` then branching late keeps history on `main`, violating the no-direct-push rule.
 
 **Why it matters:** Encoded in `/github start` — branch creation is step 4, before any file changes.
+
+---
+
+### 11. Feature branch must be created from a fresh fetch of master, not from stale HEAD
+
+**Cause:** `git checkout -b feature/x` branches from wherever HEAD currently points. If local master is behind origin/master, the branch diverges immediately and will have merge conflicts on the PR — even though no conflicting work was done.
+
+**Rule:** Always fetch before branching:
+```bash
+git fetch origin
+git checkout -b feature/x origin/master
+```
+Never branch from local master without verifying it matches `origin/master` first (`git log master..origin/master` — must be empty).
+
+---
+
+### 12. `git rebase` requires a clean working tree — stash unstaged changes first
+
+**Cause:** `git rebase origin/master` aborts with "You have unstaged changes" if any tracked file is modified but not staged. The rebase does not run at all; no commits are applied.
+
+**Rule:** Before any rebase, always stash or commit outstanding changes:
+```bash
+git stash
+git rebase origin/master
+git stash pop
+```
+
+---
+
+### 13. CHANGELOG edits must preserve the markdown element type of surrounding content
+
+**Cause:** When inserting new bullet entries into CHANGELOG.md using the Edit tool, the `new_string` can accidentally change a list item (`- text`) into a heading (`### text`) if the replacement boundary falls at the start of the surrounding content. The file builds and tests pass — the corruption is visual-only and easy to miss.
+
+**Rule:** After any CHANGELOG edit, read the modified section back and verify every line that was previously a `- ` bullet is still a `- ` bullet. Never include a bare `###` line in `new_string` unless explicitly adding a new section header.

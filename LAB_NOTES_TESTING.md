@@ -36,6 +36,12 @@ result.Should().NotBeNull();
 
 **Rule:** Use `Testcontainers.PostgreSql` to spin up an isolated PostgreSQL container per test run. Define a base class `PostgresSqlTestBase` that creates a container in `SetUp`, migrates the schema, and tears down in `TearDown`. Each integration test inherits from this and runs in isolation.
 
+### 6. xUnit `[Fact]` and `[Theory]` require explicit `using Xunit;` — not in ImplicitUsings
+
+**Cause:** `ImplicitUsings` in .NET 8 includes common BCL namespaces but not xUnit. Any test file that omits `using Xunit;` fails to compile with `CS0246: The type or namespace name 'Fact' could not be found`, even though the xUnit package is referenced.
+
+**Rule:** Every new test file must include `using Xunit;` as the first framework using. Before writing a new test file, read one existing test file in the same project to verify the required using directives — the project's existing tests are the authoritative pattern.
+
 ### 5. Assertion libraries must use FluentAssertions for readability
 
 **Cause:** With raw xUnit assertions (`Assert.NotNull(result)`), error messages are cryptic and don't explain what went wrong. FluentAssertions produces readable error messages like `Expected result to be null, but found instance of X.`
