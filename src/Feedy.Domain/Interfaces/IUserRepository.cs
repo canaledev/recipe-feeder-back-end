@@ -20,7 +20,7 @@ public interface IUserRepository
     /// <summary>
     /// Create a new user. Returns the newly created user ID.
     /// </summary>
-    Task<Guid> CreateAsync(string email, string passwordHash, string[] initialFlavorTags, CancellationToken cancellationToken);
+    Task<Guid> CreateAsync(string email, string passwordHash, string fullName, CancellationToken cancellationToken);
 
     /// <summary>
     /// Update user profile preferences.

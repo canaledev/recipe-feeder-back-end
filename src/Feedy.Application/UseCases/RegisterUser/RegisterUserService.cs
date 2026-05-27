@@ -1,5 +1,6 @@
 namespace Feedy.Application.UseCases.RegisterUser;
 
+using Feedy.Application.Interfaces;
 using Feedy.Domain.Common;
 using Feedy.Domain.Interfaces;
 
@@ -10,12 +11,17 @@ using Feedy.Domain.Interfaces;
 public class RegisterUserService
 {
     private readonly IUserRepository _userRepository;
-    private readonly PasswordHasher _passwordHasher;
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly IJwtTokenProvider _jwtTokenProvider;
 
-    public RegisterUserService(IUserRepository userRepository, PasswordHasher passwordHasher)
+    public RegisterUserService(
+        IUserRepository userRepository,
+        IPasswordHasher passwordHasher,
+        IJwtTokenProvider jwtTokenProvider)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
+        _jwtTokenProvider = jwtTokenProvider;
     }
 
     public async Task<Result<RegisterUserResponse>> HandleAsync(
@@ -31,9 +37,12 @@ public class RegisterUserService
         var userId = await _userRepository.CreateAsync(
             request.Email,
             passwordHash,
-            request.InitialFlavorTags,
+            request.FullName,
             cancellationToken);
 
-        return Result<RegisterUserResponse>.Ok(new RegisterUserResponse(userId, request.Email));
+        var token = _jwtTokenProvider.GenerateToken(userId, request.Email, request.FullName);
+
+        return Result<RegisterUserResponse>.Ok(
+            new RegisterUserResponse(token, userId, request.Email, request.FullName));
     }
 }

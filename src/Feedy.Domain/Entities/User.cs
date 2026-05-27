@@ -12,6 +12,7 @@ public class User
     public UserId Id { get; private set; }
     public Email Email { get; private set; }
     public Password Password { get; private set; }
+    public string FullName { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastLoginAt { get; private set; }
 
@@ -20,11 +21,12 @@ public class User
     public IReadOnlyList<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     // Private constructor: only aggregate can create instances
-    private User(UserId id, Email email, Password password, DateTime createdAt)
+    private User(UserId id, Email email, Password password, string fullName, DateTime createdAt)
     {
         Id = id;
         Email = email;
         Password = password;
+        FullName = fullName;
         CreatedAt = createdAt;
     }
 
@@ -32,10 +34,10 @@ public class User
     /// Factory method to create a new user.
     /// Raises UserRegisteredEvent.
     /// </summary>
-    public static User Register(Email email, Password password)
+    public static User Register(Email email, Password password, string fullName)
     {
         var userId = UserId.NewId();
-        var user = new User(userId, email, password, DateTime.UtcNow);
+        var user = new User(userId, email, password, fullName, DateTime.UtcNow);
 
         // Record domain event
         user._domainEvents.Add(new UserRegisteredEvent(userId, email.Value, DateTime.UtcNow));

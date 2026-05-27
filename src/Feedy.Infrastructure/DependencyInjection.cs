@@ -1,6 +1,8 @@
 namespace Feedy.Infrastructure;
 
+using Feedy.Application.Interfaces;
 using Feedy.Domain.Interfaces;
+using Feedy.Infrastructure.Auth;
 using Feedy.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +15,8 @@ public static class DependencyInjection
 
         services.AddScoped<IRecipeRepository>(_ => new RecipeRepository(connectionString));
         services.AddScoped<IUserRepository>(_ => new UserRepository(connectionString));
+        services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
+        services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
 
         // DB reachability check — verifies the PostgreSQL connection is alive
         services.AddHealthChecks()

@@ -19,7 +19,8 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
             .NotEmpty().WithMessage("Password is required.")
             .MinimumLength(8).WithMessage("Password must be at least 8 characters.");
 
-        RuleFor(x => x.InitialFlavorTags)
-            .NotNull().WithMessage("InitialFlavorTags must not be null.");
+        RuleFor(x => x.FullName)
+            .NotEmpty().WithMessage("Full name is required.")
+            .MaximumLength(200).WithMessage("Full name must not exceed 200 characters.");
     }
 }

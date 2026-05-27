@@ -21,7 +21,7 @@ internal class UserRepository : IUserRepository
         GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
         const string sql = @"
-            SELECT u.id, u.email, u.password_hash
+            SELECT u.id, u.email, u.password_hash AS PasswordHash, u.full_name AS FullName
             FROM users u
             WHERE u.email = @Email";
 
@@ -53,11 +53,11 @@ internal class UserRepository : IUserRepository
         return profile;
     }
 
-    public async Task<Guid> CreateAsync(string email, string passwordHash, string[] initialFlavorTags, CancellationToken cancellationToken)
+    public async Task<Guid> CreateAsync(string email, string passwordHash, string fullName, CancellationToken cancellationToken)
     {
         const string sql = @"
-            INSERT INTO users (id, email, password_hash, created_at)
-            VALUES (@Id, @Email, @PasswordHash, @CreatedAt)
+            INSERT INTO users (id, email, password_hash, full_name, created_at)
+            VALUES (@Id, @Email, @PasswordHash, @FullName, @CreatedAt)
             RETURNING id";
 
         var userId = Guid.NewGuid();
@@ -72,6 +72,7 @@ internal class UserRepository : IUserRepository
                 Id = userId,
                 Email = email,
                 PasswordHash = passwordHash,
+                FullName = fullName,
                 CreatedAt = DateTime.UtcNow
             });
 
