@@ -5,5 +5,5 @@ namespace Feedy.Application.Interfaces;
 /// </summary>
 public interface IJwtTokenProvider
 {
-    string GenerateToken(Guid userId, string email, string fullName);
+    string GenerateAccessToken(Guid userId, string email, string fullName);
 }

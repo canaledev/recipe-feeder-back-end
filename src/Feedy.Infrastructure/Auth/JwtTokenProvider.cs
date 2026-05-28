@@ -24,10 +24,10 @@ internal sealed class JwtTokenProvider : IJwtTokenProvider
             ?? throw new InvalidOperationException("JwtSettings:Secret is not configured.");
         _issuer = section["Issuer"] ?? "feedy-api";
         _audience = section["Audience"] ?? "feedy-frontend";
-        _expirationMinutes = int.TryParse(section["ExpirationMinutes"], out var minutes) ? minutes : 60;
+        _expirationMinutes = int.TryParse(section["AccessTokenExpirationMinutes"], out var m) ? m : 15;
     }
 
-    public string GenerateToken(Guid userId, string email, string fullName)
+    public string GenerateAccessToken(Guid userId, string email, string fullName)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
