@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- JWT refresh token rotation: `POST /auth/refresh` reads the `refresh_token` HttpOnly cookie, rotates it, and returns a new `{ accessToken }`; `POST /auth/logout` (requires Bearer token) revokes all active refresh tokens for the user and clears the cookie (#24)
+- Access tokens expire after 15 minutes (`JwtSettings:AccessTokenExpirationMinutes`); refresh tokens expire after 30 days (`JwtSettings:RefreshTokenExpirationDays`) — both configurable (#24)
+- Refresh token reuse detection: presenting a previously revoked token triggers immediate family-wide revocation of all sessions for that user (OWASP RFC 8725) (#24)
+- `POST /auth/login` and `POST /auth/register` responses updated: `token` field renamed to `accessToken`; refresh token delivered exclusively via `HttpOnly; Secure; SameSite=Strict` cookie (#24)
 - Auth endpoints: `POST /api/auth/register` returns `{ token, user: { id, email, fullName } }` (201) or 409 on duplicate email / 422 on validation failure; `POST /api/auth/login` returns the same shape (200) or 401 on invalid credentials — same error message for unknown email and wrong password to prevent account enumeration (#17)
 - `IPasswordHasher` and `IJwtTokenProvider` interfaces in `Feedy.Application/Interfaces/`; implementations (`BcryptPasswordHasher`, `JwtTokenProvider`) in `Feedy.Infrastructure/Auth/`; BCrypt.Net-Next used for password hashing; tokens are HS256 JWTs with expiry from `JwtSettings:ExpirationMinutes` (#17)
 - `users` DB table migration (`db/infrastructure/04_users.sql`): id, email, password_hash, full_name, created_at, last_login_at; unique constraint on email (#17)

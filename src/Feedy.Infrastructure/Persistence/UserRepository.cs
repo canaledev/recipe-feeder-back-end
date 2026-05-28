@@ -17,6 +17,19 @@ internal class UserRepository : IUserRepository
         _connectionString = connectionString;
     }
 
+    public async Task<UserData?> GetByIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        const string sql = @"
+            SELECT id, email, password_hash AS PasswordHash, full_name AS FullName
+            FROM users
+            WHERE id = @UserId";
+
+        using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        return await connection.QueryFirstOrDefaultAsync<UserData>(sql, new { UserId = userId });
+    }
+
     public async Task<UserData?>
         GetByEmailAsync(string email, CancellationToken cancellationToken)
     {

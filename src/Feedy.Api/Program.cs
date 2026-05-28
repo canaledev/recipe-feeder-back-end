@@ -38,7 +38,7 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 builder.Services
     .AddDomain()
-    .AddApplication()
+    .AddApplication(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
 
 // Translation infrastructure (i18n) — registered separately until AddInfrastructure absorbs them

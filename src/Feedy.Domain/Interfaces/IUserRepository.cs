@@ -8,6 +8,11 @@ using Feedy.Domain.Entities;
 public interface IUserRepository
 {
     /// <summary>
+    /// Get user by primary key. Returns null if not found.
+    /// </summary>
+    Task<UserData?> GetByIdAsync(Guid userId, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Get user by email. Returns null if not found.
     /// </summary>
     Task<UserData?> GetByEmailAsync(string email, CancellationToken cancellationToken);
