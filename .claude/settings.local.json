@@ -1,6 +1,30 @@
 {
+  "permissions": {
+    "allow": [
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet build d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\\\\src\\\\Feedy.Api\\\\Feedy.Api.csproj --no-restore -v q 2>&1 | Select-Object -Last 10)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet test d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end --no-build -v q 2>&1 | Select-Object -Last 15)",
+      "PowerShell(git add CHANGELOG.md src/Feedy.Api/Feedy.Api.csproj src/Feedy.Api/Program.cs)",
+      "PowerShell(git push -u origin feature/swagger-xml-docs)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; dotnet run --project d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\\\\src\\\\Feedy.Api --no-build 2>&1 | Select-Object -First 30)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; $env:ASPNETCORE_ENVIRONMENT = \"Development\"; dotnet run --project d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\\\\src\\\\Feedy.Api --no-build 2>&1)",
+      "PowerShell(Get-Command playwright 2>&1)",
+      "PowerShell(Get-Command npx 2>&1)",
+      "PowerShell(git push)",
+      "Bash(git fetch *)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; Set-Location \"d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\"; dotnet test 2>&1 | Select-Object -Last 30)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\dotnet;\" + $env:PATH; Set-Location \"d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\"; dotnet build 2>&1 | Select-Object -Last 10)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\GitHub CLI;\" + $env:PATH; Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; Set-Location \"d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\"; git push -u origin feature/cors-policy)",
+      "Bash(gh project *)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\nodejs;\" + $env:PATH; Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; & \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" issue view 24 --repo canaledev/recipe-feeder-back-end)",
+      "Bash(git commit *)",
+      "Bash(rm \"d:\\\\Documents\\\\Proyectos\\\\recipe-feeder\\\\recipe-feeder-back-end\\\\.claude\\\\commands\\\\next-task.md\")"
+    ],
+    "additionalDirectories": [
+      "d:\\Documents\\Proyectos\\recipe-feeder\\recipe-feeder-back-end\\.claude\\commands"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "feedy-tools"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
