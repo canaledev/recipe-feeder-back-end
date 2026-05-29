@@ -19,11 +19,22 @@ If the file does not exist, skip to **Cache Miss Fallback** at the bottom.
 gh issue list --repo <repo> --state open --json number,title --limit 50
 ```
 
-**1c. Reconcile:**
+**1c. Check CHANGELOG for already-shipped issues:**
 
-- `open_numbers` = set of issue numbers from the `gh` output.
+Read `CHANGELOG.md`. For each open issue number N, check whether `(#N)` appears anywhere in the file.
+If it does, the issue was already implemented but not closed on GitHub.
+
+- Collect these as `shipped_open` — they will be excluded from the dependency table and surfaced separately.
+- At the end of the analysis, show a compact callout:
+
+  > **Already shipped but still open — close these:**
+  > - #N — <title> (found in CHANGELOG)
+
+**1d. Reconcile graph vs. live data:**
+
+- `open_numbers` = issue numbers from the `gh` output **minus** `shipped_open`.
 - `active_issues` = graph entries whose number is in `open_numbers`.
-- For each open number **not** in the graph, emit a warning inline in the table:
+- For each open number (excluding `shipped_open`) **not** in the graph, emit a warning inline in the table:
   `⚠️ #N (<title>) — not in dependency graph. Run /start-feature to register it.`
 - Issues in the graph but absent from `open_numbers` are closed — exclude from analysis.
 
@@ -96,7 +107,8 @@ If `.claude/issue-dependency-graph.json` is missing:
    ```powershell
    gh issue list --repo <repo> --state open --json number,title,body,labels --limit 50
    ```
-2. Analyze dependencies for each issue:
+2. Read `CHANGELOG.md` and remove any issue whose `(#N)` appears in it from the working set; surface them as "Already shipped — close these" (same as Step 1c above).
+3. Analyze dependencies for each remaining issue:
    - Explicit: body says "Depends on #N", "Blocked by #N", "Requires #N"
    - Structural: issue adds auth endpoints and auth is not yet merged
    - Structural: issue extends an entity/table/controller introduced by another open issue
