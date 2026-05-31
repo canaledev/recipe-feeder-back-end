@@ -16,6 +16,7 @@ public static class DependencyInjection
         services.AddScoped<IRecipeRepository>(_ => new RecipeRepository(connectionString));
         services.AddScoped<IUserRepository>(_ => new UserRepository(connectionString));
         services.AddScoped<IRefreshTokenRepository>(_ => new RefreshTokenRepository(connectionString));
+        services.AddScoped<IPlaylistRepository>(_ => new PlaylistRepository(connectionString));
         services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
         services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
 
