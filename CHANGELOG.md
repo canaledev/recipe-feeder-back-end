@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Playlist Catalog API — 5 new endpoints for browsing, subscribing, and viewing playlists (#18):
+  - `GET /api/playlists` — paginated public browse with search, dietary regime, difficulty, and sort filters
+  - `GET /api/playlists/subscribed` — authenticated user's active subscriptions with completion-status filter
+  - `GET /api/playlists/{id}` — full playlist detail including ordered recipe list with per-item `matchPercentage` (computed by `PlaylistItemRankingService` against user profile) and `completionState`; `currentPlayheadIndex` derived from item completion states
+  - `POST /api/playlists/{id}/subscription` — subscribe; seeds `user_playlist_items` rows with `never_done` in a single transaction; returns 409 if already subscribed
+  - `DELETE /api/playlists/{id}/subscription` — soft-delete unsubscribe (sets `unsubscribed_at`); completion history preserved; returns 404 if not subscribed
+- DB migrations `06_playlists.sql` (playlists + playlist_items) and `07_user_playlist_progress.sql` (user_playlist_subscriptions + user_playlist_items with completion state) (#18)
+- 13 unit tests across 5 use case slices covering happy paths, guard-clause errors, and matchPercentage computation (#18)
 - JWT refresh token rotation: `POST /auth/refresh` reads the `refresh_token` HttpOnly cookie, rotates it, and returns a new `{ accessToken }`; `POST /auth/logout` (requires Bearer token) revokes all active refresh tokens for the user and clears the cookie (#24)
 - Access tokens expire after 15 minutes (`JwtSettings:AccessTokenExpirationMinutes`); refresh tokens expire after 30 days (`JwtSettings:RefreshTokenExpirationDays`) — both configurable (#24)
 - Refresh token reuse detection: presenting a previously revoked token triggers immediate family-wide revocation of all sessions for that user (OWASP RFC 8725) (#24)
